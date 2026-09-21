@@ -16,7 +16,7 @@ import (
 )
 
 type NodeAppHandler struct {
-	appStore     *models.NodeStore
+	appStore     *models.NodeAppStore
 	hostingStore *models.HostingStore
 	nodeStore    *models.NodeStore // Assuming this is actually referring to Server Nodes
 	agentClient  *agentclient.Client
@@ -25,7 +25,7 @@ type NodeAppHandler struct {
 }
 
 func NewNodeAppHandler(
-	appStore *models.NodeStore,
+	appStore *models.NodeAppStore,
 	hostingStore *models.HostingStore,
 	nodeStore *models.NodeStore, // Represents server nodes
 	agentClient *agentclient.Client,

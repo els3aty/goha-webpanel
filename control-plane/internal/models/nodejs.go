@@ -31,16 +31,16 @@ type NodeApp struct {
 	UpdatedAt     time.Time
 }
 
-type NodeStore struct {
+type NodeAppStore struct {
 	pool *pgxpool.Pool
 }
 
-func NewNodeAppStore(pool *pgxpool.Pool) *NodeStore {
-	return &NodeStore{pool: pool}
+func NewNodeAppStore(pool *pgxpool.Pool) *NodeAppStore {
+	return &NodeAppStore{pool: pool}
 }
 
 // CreateApp inserts a new Node.js app record.
-func (s *NodeStore) CreateApp(ctx context.Context, app *NodeApp) error {
+func (s *NodeAppStore) CreateApp(ctx context.Context, app *NodeApp) error {
 	return s.pool.QueryRow(ctx, `
 		INSERT INTO nodejs_apps (hosting_user_id, app_name, domain, app_path, startup_file, node_version, port, status)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -49,7 +49,7 @@ func (s *NodeStore) CreateApp(ctx context.Context, app *NodeApp) error {
 }
 
 // GetApp retrieves an app by ID.
-func (s *NodeStore) GetApp(ctx context.Context, id uuid.UUID) (*NodeApp, error) {
+func (s *NodeAppStore) GetApp(ctx context.Context, id uuid.UUID) (*NodeApp, error) {
 	var app NodeApp
 	err := s.pool.QueryRow(ctx, `
 		SELECT id, hosting_user_id, app_name, domain, app_path, startup_file, node_version, port, status, created_at, updated_at
@@ -62,7 +62,7 @@ func (s *NodeStore) GetApp(ctx context.Context, id uuid.UUID) (*NodeApp, error) 
 }
 
 // UpdateAppStatus updates the status of an app.
-func (s *NodeStore) UpdateAppStatus(ctx context.Context, id uuid.UUID, status NodeAppStatus) error {
+func (s *NodeAppStore) UpdateAppStatus(ctx context.Context, id uuid.UUID, status NodeAppStatus) error {
 	_, err := s.pool.Exec(ctx, `
 		UPDATE nodejs_apps SET status = $1 WHERE id = $2
 	`, status, id)
@@ -70,7 +70,7 @@ func (s *NodeStore) UpdateAppStatus(ctx context.Context, id uuid.UUID, status No
 }
 
 // DeleteApp removes an app from the DB.
-func (s *NodeStore) DeleteApp(ctx context.Context, id uuid.UUID) error {
+func (s *NodeAppStore) DeleteApp(ctx context.Context, id uuid.UUID) error {
 	_, err := s.pool.Exec(ctx, `DELETE FROM nodejs_apps WHERE id = $1`, id)
 	return err
 }
