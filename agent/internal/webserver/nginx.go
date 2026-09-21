@@ -5,9 +5,11 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path/filepath"
 	"text/template"
 
 	"github.com/hosting-panel/agent/internal/executor"
+	"github.com/hosting-panel/agent/internal/osenv"
 )
 
 type NginxDriver struct{}
@@ -92,24 +94,33 @@ func (n *NginxDriver) CreateVirtualHost(ctx context.Context, params VHostParams)
 		return err
 	}
 
-	nginxPath := fmt.Sprintf("/etc/nginx/sites-available/%s", params.Domain)
-	fpmPath := fmt.Sprintf("/etc/php/%s/fpm/pool.d/%s.conf", params.PHPVersion, params.Domain)
+	env := osenv.Get()
+	nginxVhostDir := env.NginxVhostDir()
+	nginxSymlinkDir := env.NginxSymlinkDir()
+	fpmDir := env.PHPFPMPoolDir(params.PHPVersion)
+
+	nginxPath := filepath.Join(nginxVhostDir, params.Domain+".conf")
+	fpmPath := filepath.Join(fpmDir, params.Domain+".conf")
 
 	if err := os.WriteFile(nginxPath, nginxConfig.Bytes(), 0644); err != nil {
 		return fmt.Errorf("failed to write nginx config: %w", err)
 	}
-	
+
 	if params.RuntimeType == "php" || params.RuntimeType == "" {
+		// Ensure the FPM directory exists (especially important for custom Remi paths)
+		os.MkdirAll(fpmDir, 0755)
 		if err := os.WriteFile(fpmPath, fpmConfig.Bytes(), 0644); err != nil {
 			return fmt.Errorf("failed to write fpm pool: %w", err)
 		}
 	}
 
-	symlinkPath := fmt.Sprintf("/etc/nginx/sites-enabled/%s", params.Domain)
-	if _, err := os.Stat(symlinkPath); os.IsNotExist(err) {
-		_, err = executor.Run(ctx, "/usr/bin/ln", "-s", nginxPath, symlinkPath)
-		if err != nil {
-			_, _ = executor.Run(ctx, "/bin/ln", "-s", nginxPath, symlinkPath)
+	if nginxSymlinkDir != "" {
+		symlinkPath := filepath.Join(nginxSymlinkDir, params.Domain+".conf")
+		if _, err := os.Stat(symlinkPath); os.IsNotExist(err) {
+			_, err = executor.Run(ctx, "/usr/bin/ln", "-s", nginxPath, symlinkPath)
+			if err != nil {
+				_, _ = executor.Run(ctx, "/bin/ln", "-s", nginxPath, symlinkPath)
+			}
 		}
 	}
 
@@ -154,16 +165,22 @@ func (n *NginxDriver) ConfigureLoadBalancer(ctx context.Context, params LBParams
 		return err
 	}
 
-	nginxPath := fmt.Sprintf("/etc/nginx/sites-available/%s", params.Domain)
+	env := osenv.Get()
+	nginxVhostDir := env.NginxVhostDir()
+	nginxSymlinkDir := env.NginxSymlinkDir()
+
+	nginxPath := filepath.Join(nginxVhostDir, params.Domain+".conf")
 	if err := os.WriteFile(nginxPath, configBuf.Bytes(), 0644); err != nil {
 		return fmt.Errorf("failed to write nginx config: %w", err)
 	}
 
-	symlinkPath := fmt.Sprintf("/etc/nginx/sites-enabled/%s", params.Domain)
-	if _, err := os.Stat(symlinkPath); os.IsNotExist(err) {
-		_, err = executor.Run(ctx, "/usr/bin/ln", "-s", nginxPath, symlinkPath)
-		if err != nil {
-			_, _ = executor.Run(ctx, "/bin/ln", "-s", nginxPath, symlinkPath)
+	if nginxSymlinkDir != "" {
+		symlinkPath := filepath.Join(nginxSymlinkDir, params.Domain+".conf")
+		if _, err := os.Stat(symlinkPath); os.IsNotExist(err) {
+			_, err = executor.Run(ctx, "/usr/bin/ln", "-s", nginxPath, symlinkPath)
+			if err != nil {
+				_, _ = executor.Run(ctx, "/bin/ln", "-s", nginxPath, symlinkPath)
+			}
 		}
 	}
 
@@ -171,9 +188,10 @@ func (n *NginxDriver) ConfigureLoadBalancer(ctx context.Context, params LBParams
 }
 
 func (n *NginxDriver) Reload(ctx context.Context) error {
-	_, err := executor.Run(ctx, "/usr/bin/systemctl", "reload", "nginx")
+	env := osenv.Get()
+	_, err := executor.Run(ctx, "/usr/bin/systemctl", "reload", env.NginxService())
 	if err != nil {
-		_, err = executor.Run(ctx, "/bin/systemctl", "reload", "nginx")
+		_, err = executor.Run(ctx, "/bin/systemctl", "reload", env.NginxService())
 	}
 	return err
 }
