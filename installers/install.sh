@@ -126,9 +126,11 @@ EOF
 # 7. Compile Binaries
 echo -e "${YELLOW}--> Step 6: Compiling Control Plane and Agent...${NC}"
 cd "$INSTALL_DIR/control-plane"
+go mod tidy
 go build -o /usr/local/bin/gohahost-control-plane ./cmd/server
 
 cd "$INSTALL_DIR/agent"
+go mod tidy
 go build -o /usr/local/bin/gohahost-agent ./cmd/agent
 
 # 8. Setup Systemd Services
