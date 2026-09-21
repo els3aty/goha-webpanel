@@ -46,7 +46,7 @@ echo -e "${YELLOW}Detected OS: $PRETTY_NAME ($OS_FAMILY family)${NC}"
 echo -e "${YELLOW}--> Step 1: Installing System Dependencies...${NC}"
 if [ "$OS_FAMILY" = "debian" ]; then
     apt-get update -y
-    apt-get install -y wget curl git build-essential nginx postgresql redis-server certbot \
+    apt-get install -y wget curl git build-essential nginx postgresql redis-server certbot tar \
         php-fpm php-cli php-mysql php-curl php-gd php-mbstring php-xml php-zip \
         postfix dovecot-core dovecot-imapd dovecot-pop3d jq
     
@@ -62,7 +62,7 @@ elif [ "$OS_FAMILY" = "rhel" ]; then
     dnf module reset php -y || true
     dnf module enable php:remi-8.2 -y || true
 
-    dnf install -y wget curl git gcc nginx postgresql-server redis certbot \
+    dnf install -y wget curl git gcc nginx postgresql-server redis certbot tar \
         php-fpm php-cli php-mysqlnd php-curl php-gd php-mbstring php-xml php-zip \
         postfix dovecot jq
     
