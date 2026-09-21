@@ -5,7 +5,6 @@ import (
 	"io/fs"
 	"net/http"
 	"os"
-	"path/filepath"
 )
 
 //go:embed dist/*
