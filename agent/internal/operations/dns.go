@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/els3aty/goha-webpanel/agent/internal/executor"
-	"github.com/els3aty/goha-webpanel/agent/internal/protocol"
 )
 
 type DNSRecord struct {
@@ -73,7 +72,7 @@ func ensureFQDN(domain string) string {
 // HandleCreateDNSZone creates a zone in PowerDNS via REST API
 func HandleCreateDNSZone(ctx context.Context, payload []byte) (interface{}, error) {
 	var params CreateDNSZoneParams
-	if err := protocol.ParsePayload[CreateDNSZoneParams](&protocol.Task{Operation: string(OpCreateDNSZone), Payload: payload}); err != nil {
+	if err := json.Unmarshal(payload, &params); err != nil {
 		return nil, err
 	}
 
@@ -146,7 +145,7 @@ func HandleCreateDNSZone(ctx context.Context, payload []byte) (interface{}, erro
 // HandleDeleteDNSZone deletes a zone in PowerDNS via REST API
 func HandleDeleteDNSZone(ctx context.Context, payload []byte) (interface{}, error) {
 	var params DeleteDNSZoneParams
-	if err := protocol.ParsePayload[DeleteDNSZoneParams](&protocol.Task{Operation: string(OpDeleteDNSZone), Payload: payload}); err != nil {
+	if err := json.Unmarshal(payload, &params); err != nil {
 		return nil, err
 	}
 	if err := executor.ValidateDomain(params.Domain); err != nil {

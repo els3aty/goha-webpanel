@@ -1,12 +1,12 @@
 package operations
 
 import (
+	"encoding/json"
 	"context"
 	"fmt"
 	"regexp"
 
 	"github.com/els3aty/goha-webpanel/agent/internal/executor"
-	"github.com/els3aty/goha-webpanel/agent/internal/protocol"
 )
 
 // SQL injection prevention: strictly limit DB names and usernames to alphanumeric + underscores
@@ -30,7 +30,7 @@ type GrantDatabasePrivilegesParams struct {
 // HandleCreateDatabase executes a CREATE DATABASE statement securely.
 func HandleCreateDatabase(ctx context.Context, payload []byte) (interface{}, error) {
 	var params CreateDatabaseParams
-	if err := protocol.ParsePayload[CreateDatabaseParams](&protocol.Task{Operation: string(OpCreateDatabase), Payload: payload}); err != nil {
+	if err := json.Unmarshal(payload, &params); err != nil {
 		return nil, err
 	}
 
@@ -56,7 +56,7 @@ func HandleCreateDatabase(ctx context.Context, payload []byte) (interface{}, err
 // HandleCreateDatabaseUser executes a CREATE USER statement securely.
 func HandleCreateDatabaseUser(ctx context.Context, payload []byte) (interface{}, error) {
 	var params CreateDatabaseUserParams
-	if err := protocol.ParsePayload[CreateDatabaseUserParams](&protocol.Task{Operation: string(OpCreateDatabaseUser), Payload: payload}); err != nil {
+	if err := json.Unmarshal(payload, &params); err != nil {
 		return nil, err
 	}
 
@@ -92,7 +92,7 @@ func HandleCreateDatabaseUser(ctx context.Context, payload []byte) (interface{},
 // HandleGrantDatabasePrivileges grants access for a user to a DB.
 func HandleGrantDatabasePrivileges(ctx context.Context, payload []byte) (interface{}, error) {
 	var params GrantDatabasePrivilegesParams
-	if err := protocol.ParsePayload[GrantDatabasePrivilegesParams](&protocol.Task{Operation: string(OpGrantDatabasePrivileges), Payload: payload}); err != nil {
+	if err := json.Unmarshal(payload, &params); err != nil {
 		return nil, err
 	}
 

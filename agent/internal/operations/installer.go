@@ -1,6 +1,7 @@
 package operations
 
 import (
+	"encoding/json"
 	"bytes"
 	"context"
 	"fmt"
@@ -9,7 +10,6 @@ import (
 	"text/template"
 
 	"github.com/els3aty/goha-webpanel/agent/internal/executor"
-	"github.com/els3aty/goha-webpanel/agent/internal/protocol"
 )
 
 type InstallAppParams struct {
@@ -42,7 +42,7 @@ require_once ABSPATH . 'wp-settings.php';
 
 func HandleInstallApp(ctx context.Context, payload []byte) (interface{}, error) {
 	var params InstallAppParams
-	if err := protocol.ParsePayload[InstallAppParams](&protocol.Task{Operation: "InstallApp", Payload: payload}); err != nil {
+	if err := json.Unmarshal(payload, &params); err != nil {
 		return nil, err
 	}
 

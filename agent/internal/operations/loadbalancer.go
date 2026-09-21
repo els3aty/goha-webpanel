@@ -1,17 +1,17 @@
 package operations
 
 import (
+	"encoding/json"
 	"context"
 	"fmt"
 
 	"github.com/els3aty/goha-webpanel/agent/internal/executor"
-	"github.com/els3aty/goha-webpanel/agent/internal/protocol"
 	"github.com/els3aty/goha-webpanel/agent/internal/webserver"
 )
 
 func HandleConfigureLoadBalancer(ctx context.Context, payload []byte) (interface{}, error) {
 	var params webserver.LBParams
-	if err := protocol.ParsePayload[webserver.LBParams](&protocol.Task{Operation: "ConfigureLoadBalancer", Payload: payload}); err != nil {
+	if err := json.Unmarshal(payload, &params); err != nil {
 		return nil, err
 	}
 

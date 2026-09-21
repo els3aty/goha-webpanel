@@ -1,6 +1,7 @@
 package operations
 
 import (
+	"encoding/json"
 	"context"
 	"fmt"
 	"os"
@@ -9,7 +10,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/els3aty/goha-webpanel/agent/internal/protocol"
 )
 
 // FileReq payload received from Control Plane
@@ -71,7 +71,7 @@ func SecureResolvePath(username, requestedPath string) (string, error) {
 
 func HandleFileList(ctx context.Context, payload []byte) (interface{}, error) {
 	var req FileReq
-	if err := protocol.ParsePayload[FileReq](&protocol.Task{Operation: "FileList", Payload: payload}); err != nil {
+	if err := json.Unmarshal(payload, &params); err != nil {
 		return nil, err
 	}
 
@@ -104,7 +104,7 @@ func HandleFileList(ctx context.Context, payload []byte) (interface{}, error) {
 
 func HandleFileRead(ctx context.Context, payload []byte) (interface{}, error) {
 	var req FileReq
-	if err := protocol.ParsePayload[FileReq](&protocol.Task{Operation: "FileRead", Payload: payload}); err != nil {
+	if err := json.Unmarshal(payload, &params); err != nil {
 		return nil, err
 	}
 
@@ -123,7 +123,7 @@ func HandleFileRead(ctx context.Context, payload []byte) (interface{}, error) {
 
 func HandleFileWrite(ctx context.Context, payload []byte) (interface{}, error) {
 	var req FileReq
-	if err := protocol.ParsePayload[FileReq](&protocol.Task{Operation: "FileWrite", Payload: payload}); err != nil {
+	if err := json.Unmarshal(payload, &params); err != nil {
 		return nil, err
 	}
 
@@ -155,7 +155,7 @@ func HandleFileWrite(ctx context.Context, payload []byte) (interface{}, error) {
 
 func HandleFileDelete(ctx context.Context, payload []byte) (interface{}, error) {
 	var req FileReq
-	if err := protocol.ParsePayload[FileReq](&protocol.Task{Operation: "FileDelete", Payload: payload}); err != nil {
+	if err := json.Unmarshal(payload, &params); err != nil {
 		return nil, err
 	}
 

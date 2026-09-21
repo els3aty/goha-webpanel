@@ -1,12 +1,12 @@
 package operations
 
 import (
+	"encoding/json"
 	"context"
 	"fmt"
 	"os/user"
 
 	"github.com/els3aty/goha-webpanel/agent/internal/executor"
-	"github.com/els3aty/goha-webpanel/agent/internal/protocol"
 )
 
 type CreateNodeAppParams struct {
@@ -22,7 +22,7 @@ type CreateNodeAppParams struct {
 // HandleCreateNodeApp creates and starts a PM2 process safely under the specific user.
 func HandleCreateNodeApp(ctx context.Context, payload []byte) (interface{}, error) {
 	var params CreateNodeAppParams
-	if err := protocol.ParsePayload[CreateNodeAppParams](&protocol.Task{Operation: string(OpCreateNodeApp), Payload: payload}); err != nil {
+	if err := json.Unmarshal(payload, &params); err != nil {
 		return nil, err
 	}
 

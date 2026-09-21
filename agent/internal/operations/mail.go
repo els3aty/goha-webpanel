@@ -1,13 +1,13 @@
 package operations
 
 import (
+	"encoding/json"
 	"context"
 	"fmt"
 	"os"
 	"strings"
 
 	"github.com/els3aty/goha-webpanel/agent/internal/executor"
-	"github.com/els3aty/goha-webpanel/agent/internal/protocol"
 )
 
 type CreateMailboxParams struct {
@@ -34,7 +34,7 @@ const (
 
 func HandleCreateMailbox(ctx context.Context, payload []byte) (interface{}, error) {
 	var params CreateMailboxParams
-	if err := protocol.ParsePayload[CreateMailboxParams](&protocol.Task{Operation: string(OpCreateMailbox), Payload: payload}); err != nil {
+	if err := json.Unmarshal(payload, &params); err != nil {
 		return nil, err
 	}
 
@@ -69,7 +69,7 @@ func HandleCreateMailbox(ctx context.Context, payload []byte) (interface{}, erro
 
 func HandleDeleteMailbox(ctx context.Context, payload []byte) (interface{}, error) {
 	var params DeleteMailboxParams
-	if err := protocol.ParsePayload[DeleteMailboxParams](&protocol.Task{Operation: string(OpDeleteMailbox), Payload: payload}); err != nil {
+	if err := json.Unmarshal(payload, &params); err != nil {
 		return nil, err
 	}
 	if !strings.Contains(params.Address, "@") {
@@ -97,7 +97,7 @@ func HandleDeleteMailbox(ctx context.Context, payload []byte) (interface{}, erro
 
 func HandleCreateAlias(ctx context.Context, payload []byte) (interface{}, error) {
 	var params CreateAliasParams
-	if err := protocol.ParsePayload[CreateAliasParams](&protocol.Task{Operation: string(OpCreateAlias), Payload: payload}); err != nil {
+	if err := json.Unmarshal(payload, &params); err != nil {
 		return nil, err
 	}
 	if !strings.Contains(params.Source, "@") || !strings.Contains(params.Destination, "@") {

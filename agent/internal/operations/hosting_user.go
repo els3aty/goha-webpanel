@@ -1,12 +1,12 @@
 package operations
 
 import (
+	"encoding/json"
 	"context"
 	"fmt"
 	"os"
 
 	"github.com/els3aty/goha-webpanel/agent/internal/executor"
-	"github.com/els3aty/goha-webpanel/agent/internal/protocol"
 )
 
 type CreateHostingUserParams struct {
@@ -15,7 +15,7 @@ type CreateHostingUserParams struct {
 
 func HandleCreateHostingUser(ctx context.Context, payload []byte) (interface{}, error) {
 	var params CreateHostingUserParams
-	if err := protocol.ParsePayload[CreateHostingUserParams](&protocol.Task{Operation: string(OpCreateHostingUser), Payload: payload}); err != nil {
+	if err := json.Unmarshal(payload, &params); err != nil {
 		return nil, err
 	}
 

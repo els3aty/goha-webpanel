@@ -231,11 +231,17 @@ func ParseTask(data []byte) (*Task, error) {
 
 // ParsePayload decodes the typed operation payload into the given struct.
 // Operations must call this to get their typed parameters.
-func ParsePayload[T any](task *Task) (*T, error) {
+func ParsePayload[T any](task *Task) error {
 	var params T
+	_ = params
 	if err := json.Unmarshal(task.Payload, &params); err != nil {
-		return nil, fmt.Errorf("failed to parse payload for operation %s: %w",
+		return fmt.Errorf("failed to parse payload for operation %s: %w",
 			task.Operation, err)
 	}
-	return &params, nil
+	return nil
+}
+
+// DecodePayload unmarshals payload directly into the provided destination.
+func DecodePayload(payload []byte, dest any) error {
+	return json.Unmarshal(payload, dest)
 }

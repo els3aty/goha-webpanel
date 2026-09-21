@@ -1,18 +1,18 @@
 package operations
 
 import (
+	"encoding/json"
 	"context"
 	"fmt"
 	"os"
 
 	"github.com/els3aty/goha-webpanel/agent/internal/executor"
-	"github.com/els3aty/goha-webpanel/agent/internal/protocol"
 	"github.com/els3aty/goha-webpanel/agent/internal/webserver"
 )
 
 func HandleCreateVirtualHost(ctx context.Context, payload []byte) (interface{}, error) {
 	var params webserver.VHostParams
-	if err := protocol.ParsePayload[webserver.VHostParams](&protocol.Task{Operation: string(OpCreateVirtualHost), Payload: payload}); err != nil {
+	if err := json.Unmarshal(payload, &params); err != nil {
 		return nil, err
 	}
 

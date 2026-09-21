@@ -1,13 +1,13 @@
 package operations
 
 import (
+	"encoding/json"
 	"context"
 	"fmt"
 	"os"
 	"regexp"
 
 	"github.com/els3aty/goha-webpanel/agent/internal/executor"
-	"github.com/els3aty/goha-webpanel/agent/internal/protocol"
 )
 
 type RunBackupParams struct {
@@ -29,7 +29,7 @@ var validSQLNameBackup = regexp.MustCompile(`^[a-zA-Z0-9_]{1,64}$`)
 // HandleRunBackup performs a backup safely.
 func HandleRunBackup(ctx context.Context, payload []byte) (interface{}, error) {
 	var params RunBackupParams
-	if err := protocol.ParsePayload[RunBackupParams](&protocol.Task{Operation: string(OpRunBackup), Payload: payload}); err != nil {
+	if err := json.Unmarshal(payload, &params); err != nil {
 		return nil, err
 	}
 
@@ -93,7 +93,7 @@ func HandleRunBackup(ctx context.Context, payload []byte) (interface{}, error) {
 // HandleRunRestore performs a restoration safely.
 func HandleRunRestore(ctx context.Context, payload []byte) (interface{}, error) {
 	var params RunRestoreParams
-	if err := protocol.ParsePayload[RunRestoreParams](&protocol.Task{Operation: string(OpRunRestore), Payload: payload}); err != nil {
+	if err := json.Unmarshal(payload, &params); err != nil {
 		return nil, err
 	}
 
