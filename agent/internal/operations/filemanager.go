@@ -71,7 +71,7 @@ func SecureResolvePath(username, requestedPath string) (string, error) {
 
 func HandleFileList(ctx context.Context, payload []byte) (interface{}, error) {
 	var req FileReq
-	if err := json.Unmarshal(payload, &params); err != nil {
+	if err := json.Unmarshal(payload, &req); err != nil {
 		return nil, err
 	}
 
@@ -104,7 +104,7 @@ func HandleFileList(ctx context.Context, payload []byte) (interface{}, error) {
 
 func HandleFileRead(ctx context.Context, payload []byte) (interface{}, error) {
 	var req FileReq
-	if err := json.Unmarshal(payload, &params); err != nil {
+	if err := json.Unmarshal(payload, &req); err != nil {
 		return nil, err
 	}
 
@@ -123,7 +123,7 @@ func HandleFileRead(ctx context.Context, payload []byte) (interface{}, error) {
 
 func HandleFileWrite(ctx context.Context, payload []byte) (interface{}, error) {
 	var req FileReq
-	if err := json.Unmarshal(payload, &params); err != nil {
+	if err := json.Unmarshal(payload, &req); err != nil {
 		return nil, err
 	}
 
@@ -155,7 +155,7 @@ func HandleFileWrite(ctx context.Context, payload []byte) (interface{}, error) {
 
 func HandleFileDelete(ctx context.Context, payload []byte) (interface{}, error) {
 	var req FileReq
-	if err := json.Unmarshal(payload, &params); err != nil {
+	if err := json.Unmarshal(payload, &req); err != nil {
 		return nil, err
 	}
 

@@ -37,7 +37,7 @@ func HandleCreateNodeApp(ctx context.Context, payload []byte) (interface{}, erro
 	}
 
 	// Validate user exists
-	u, err := user.Lookup(params.Username)
+	_, err := user.Lookup(params.Username)
 	if err != nil {
 		return nil, fmt.Errorf("user not found: %w", err)
 	}

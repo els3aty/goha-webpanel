@@ -111,7 +111,10 @@ func HandleGetMetrics(ctx context.Context, payload []byte) (interface{}, error) 
 		// systemctl is-active returns 0 if active, >0 if inactive/failed
 		// Using strict exec.Command via executor.Run prevents shell injection
 		out, err := executor.Run(ctx, "/usr/bin/systemctl", "is-active", svc)
-		statusStr := strings.TrimSpace(string(out))
+		statusStr := ""
+		if out != nil {
+			statusStr = strings.TrimSpace(out.Stdout)
+		}
 		if err != nil && statusStr == "" {
 			statusStr = "failed/unknown"
 		}
