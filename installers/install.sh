@@ -178,6 +178,13 @@ systemctl daemon-reload
 systemctl enable --now gohahost-control-plane
 systemctl enable --now gohahost-agent
 
+# Open port 8080 in firewalld if it's active
+if systemctl is-active --quiet firewalld; then
+    echo "--> Opening port 8080 in firewall..."
+    firewall-cmd --permanent --add-port=8080/tcp >/dev/null 2>&1
+    firewall-cmd --reload >/dev/null 2>&1
+fi
+
 # Give it a moment to start and run migrations
 sleep 3
 
