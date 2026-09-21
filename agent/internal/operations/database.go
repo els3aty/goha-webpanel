@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/hosting-panel/agent/internal/executor"
-	"github.com/hosting-panel/agent/internal/protocol"
+	"github.com/els3aty/goha-webpanel/agent/internal/executor"
+	"github.com/els3aty/goha-webpanel/agent/internal/protocol"
 )
 
 // SQL injection prevention: strictly limit DB names and usernames to alphanumeric + underscores

@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hosting-panel/control-plane/internal/auth"
-	"github.com/hosting-panel/control-plane/internal/rbac"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/auth"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/rbac"
 )
 
 // ── Argon2id Tests ────────────────────────────────────────────────────────────

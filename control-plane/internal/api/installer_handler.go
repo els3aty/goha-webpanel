@@ -7,11 +7,11 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/hosting-panel/control-plane/internal/agentclient"
-	"github.com/hosting-panel/control-plane/internal/audit"
-	"github.com/hosting-panel/control-plane/internal/auth"
-	"github.com/hosting-panel/control-plane/internal/models"
-	"github.com/hosting-panel/control-plane/internal/rbac"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/agentclient"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/audit"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/auth"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/models"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/rbac"
 )
 
 type InstallerHandler struct {

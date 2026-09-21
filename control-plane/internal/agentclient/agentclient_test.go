@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hosting-panel/control-plane/internal/agentclient"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/agentclient"
 )
 
 func TestTaskBuilder_Sign(t *testing.T) {

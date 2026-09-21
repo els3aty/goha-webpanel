@@ -15,7 +15,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hosting-panel/control-plane/internal/rbac"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/rbac"
 )
 
 // sensitiveHeaders is the list of headers whose values are always redacted.

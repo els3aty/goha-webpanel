@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"github.com/hosting-panel/agent/internal/executor"
-	"github.com/hosting-panel/agent/internal/osenv"
+	"github.com/els3aty/goha-webpanel/agent/internal/executor"
+	"github.com/els3aty/goha-webpanel/agent/internal/osenv"
 )
 
 type NginxDriver struct{}

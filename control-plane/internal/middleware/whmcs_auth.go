@@ -7,8 +7,8 @@ import (
 	"strings"
 	"context"
 
-	"github.com/hosting-panel/control-plane/internal/models"
-	"github.com/hosting-panel/control-plane/internal/rbac"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/models"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/rbac"
 )
 
 type whmcsContextKey string

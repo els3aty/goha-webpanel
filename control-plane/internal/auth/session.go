@@ -21,7 +21,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/hosting-panel/control-plane/internal/config"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/config"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 

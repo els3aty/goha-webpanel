@@ -8,14 +8,14 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
-	"github.com/hosting-panel/control-plane/internal/audit"
-	"github.com/hosting-panel/control-plane/internal/auth"
-	"github.com/hosting-panel/control-plane/internal/config"
-	"github.com/hosting-panel/control-plane/internal/middleware"
-	"github.com/hosting-panel/control-plane/internal/models"
-	"github.com/hosting-panel/control-plane/internal/rbac"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/audit"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/auth"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/config"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/middleware"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/models"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/rbac"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/hosting-panel/control-plane/internal/agentclient"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/agentclient"
 )
 
 // Dependencies groups all router dependencies.

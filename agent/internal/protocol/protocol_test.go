@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hosting-panel/agent/internal/nonce"
-	"github.com/hosting-panel/agent/internal/protocol"
+	"github.com/els3aty/goha-webpanel/agent/internal/nonce"
+	"github.com/els3aty/goha-webpanel/agent/internal/protocol"
 )
 
 var testKey = []byte("super-secret-test-key-32-bytes-long")

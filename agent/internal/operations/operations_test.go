@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/hosting-panel/agent/internal/operations"
+	"github.com/els3aty/goha-webpanel/agent/internal/operations"
 )
 
 func TestIsAllowed(t *testing.T) {

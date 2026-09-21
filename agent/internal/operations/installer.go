@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"github.com/hosting-panel/agent/internal/executor"
-	"github.com/hosting-panel/agent/internal/protocol"
+	"github.com/els3aty/goha-webpanel/agent/internal/executor"
+	"github.com/els3aty/goha-webpanel/agent/internal/protocol"
 )
 
 type InstallAppParams struct {

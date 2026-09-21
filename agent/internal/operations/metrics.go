@@ -7,7 +7,7 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/hosting-panel/agent/internal/executor"
+	"github.com/els3aty/goha-webpanel/agent/internal/executor"
 )
 
 type NodeMetrics struct {

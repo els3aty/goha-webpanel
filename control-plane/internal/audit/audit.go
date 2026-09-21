@@ -13,8 +13,8 @@ import (
 	"log/slog"
 
 	"github.com/google/uuid"
-	"github.com/hosting-panel/control-plane/internal/middleware"
-	"github.com/hosting-panel/control-plane/internal/rbac"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/middleware"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/rbac"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 

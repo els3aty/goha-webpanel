@@ -10,11 +10,11 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/hosting-panel/control-plane/internal/audit"
-	"github.com/hosting-panel/control-plane/internal/auth"
-	"github.com/hosting-panel/control-plane/internal/config"
-	"github.com/hosting-panel/control-plane/internal/middleware"
-	"github.com/hosting-panel/control-plane/internal/rbac"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/audit"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/auth"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/config"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/middleware"
+	"github.com/els3aty/goha-webpanel/control-plane/internal/rbac"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/hosting-panel/agent/internal/executor"
-	"github.com/hosting-panel/agent/internal/protocol"
-	"github.com/hosting-panel/agent/internal/webserver"
+	"github.com/els3aty/goha-webpanel/agent/internal/executor"
+	"github.com/els3aty/goha-webpanel/agent/internal/protocol"
+	"github.com/els3aty/goha-webpanel/agent/internal/webserver"
 )
 
 func HandleCreateVirtualHost(ctx context.Context, payload []byte) (interface{}, error) {

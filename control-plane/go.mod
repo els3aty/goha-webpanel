@@ -1,4 +1,4 @@
-module github.com/hosting-panel/control-plane
+module github.com/els3aty/goha-webpanel/control-plane
 
 go 1.22
 

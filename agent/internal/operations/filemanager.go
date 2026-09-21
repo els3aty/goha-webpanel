@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/hosting-panel/agent/internal/protocol"
+	"github.com/els3aty/goha-webpanel/agent/internal/protocol"
 )
 
 // FileReq payload received from Control Plane

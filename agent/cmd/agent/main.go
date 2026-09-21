@@ -14,11 +14,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/hosting-panel/agent/internal/config"
-	"github.com/hosting-panel/agent/internal/mtls"
-	"github.com/hosting-panel/agent/internal/nonce"
-	"github.com/hosting-panel/agent/internal/operations"
-	"github.com/hosting-panel/agent/internal/protocol"
+	"github.com/els3aty/goha-webpanel/agent/internal/config"
+	"github.com/els3aty/goha-webpanel/agent/internal/mtls"
+	"github.com/els3aty/goha-webpanel/agent/internal/nonce"
+	"github.com/els3aty/goha-webpanel/agent/internal/operations"
+	"github.com/els3aty/goha-webpanel/agent/internal/protocol"
 )
 
 func main() {
