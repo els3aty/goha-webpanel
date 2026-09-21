@@ -61,7 +61,7 @@ func RequireWHMCSAuth(store *models.WHMCSStore) func(http.Handler) http.Handler 
 				Role:   rbac.RoleAdmin, // Grant scoped admin for WHMCS context, handlers must verify it's a WHMCS principal
 			}
 
-			ctx := context.WithValue(r.Context(), rbac.PrincipalContextKey, p)
+			ctx := rbac.WithPrincipal(r.Context(), p)
 			ctx = context.WithValue(ctx, whmcsTokenKey, token)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
@@ -78,4 +78,20 @@ func RequireWHMCSContext(next http.Handler) http.Handler {
 		}
 		next.ServeHTTP(w, r)
 	})
+}
+
+// getRealIP extracts the actual client IP from the request, respecting proxies.
+func getRealIP(r *http.Request) string {
+	if ip := r.Header.Get("X-Forwarded-For"); ip != "" {
+		parts := strings.Split(ip, ",")
+		return strings.TrimSpace(parts[0])
+	}
+	if ip := r.Header.Get("X-Real-IP"); ip != "" {
+		return strings.TrimSpace(ip)
+	}
+	addr := r.RemoteAddr
+	if idx := strings.LastIndex(addr, ":"); idx != -1 {
+		return addr[:idx]
+	}
+	return addr
 }
