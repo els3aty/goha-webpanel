@@ -16,13 +16,14 @@ import (
 	"github.com/els3aty/goha-webpanel/control-plane/internal/rbac"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/els3aty/goha-webpanel/control-plane/internal/agentclient"
+	"github.com/els3aty/goha-webpanel/control-plane/ui"
 )
 
 // Dependencies groups all router dependencies.
 type Dependencies struct {
-	Pool      *pgxpool.Pool
-	Sessions  *auth.SessionManager
-	TOTP      *auth.TOTPManager
+	Pool        *pgxpool.Pool
+	Sessions    *auth.SessionManager
+	TOTP        *auth.TOTPManager
 	AuditLog    *audit.Logger
 	Config      *config.Config
 	Logger      *slog.Logger
@@ -46,6 +47,12 @@ func NewRouter(deps *Dependencies) http.Handler {
 	// Authentication middleware — sets principal in context if valid session found
 	authn := middleware.NewAuthenticator(deps.Sessions, deps.Pool, &deps.Config.Session)
 	r.Use(authn.Authenticate)
+
+	// ── Serve Frontend SPA ───────────────────────────────────────────────────
+	spaServer := ui.NewSPAServer()
+	r.Get("/*", func(w http.ResponseWriter, req *http.Request) {
+		spaServer.ServeHTTP(w, req)
+	})
 
 	// ── Public routes (no auth required) ─────────────────────────────────────
 	r.Group(func(r chi.Router) {
