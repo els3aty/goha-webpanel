@@ -161,6 +161,8 @@ func NewRouter(deps *Dependencies) http.Handler {
 		r.Use(rbac.Require(rbac.RoleAdmin))
 
 		// Admin user management (Phase 2 stubs — full implementation in Phase 15)
+	})
+
 	// ── SuperAdmin-only routes ────────────────────────────────────────────────
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.RequireAuth)
