@@ -90,14 +90,18 @@ func run(logger *slog.Logger) error {
 	totpMgr := auth.NewTOTPManager(pool, encryptor)
 
 	// ── Initialize Agent Client ───────────────────────────────────────────────
-	// Secure mTLS client configured via cfg.Agent.ClientCert/Key
-	agentClient, err := agentclient.NewClient(
-		cfg.Agent.ClientCert,
-		cfg.Agent.ClientKey,
-		cfg.Agent.CACert,
-	)
-	if err != nil {
-		return fmt.Errorf("failed to initialize agent client: %w", err)
+	// Secure mTLS client — optional, only if cert files are configured via env
+	var agentClient *agentclient.Client
+	agentCert := os.Getenv("AGENT_CLIENT_CERT")
+	agentKey := os.Getenv("AGENT_CLIENT_KEY")
+	agentCA := os.Getenv("AGENT_CA_CERT")
+	if agentCert != "" && agentKey != "" && agentCA != "" {
+		agentClient, err = agentclient.NewClient(agentCert, agentKey, agentCA)
+		if err != nil {
+			return fmt.Errorf("failed to initialize agent client: %w", err)
+		}
+	} else {
+		logger.Warn("Agent mTLS not configured — agent features disabled")
 	}
 
 	// ── Build router ──────────────────────────────────────────────────────────
