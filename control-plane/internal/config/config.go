@@ -112,9 +112,10 @@ func Load() (*Config, error) {
 	c.DB.SSLMode = getEnv("DB_SSLMODE", "require")
 	c.DB.MaxConns = getEnvInt("DB_MAX_CONNS", 20)
 
-	// Production: require SSL
-	if c.App.Env == "production" && c.DB.SSLMode == "disable" {
-		errs = append(errs, "DB_SSLMODE cannot be 'disable' in production")
+	// Production: require SSL unless connecting to localhost
+	isLocalDB := c.DB.Host == "localhost" || c.DB.Host == "127.0.0.1"
+	if c.App.Env == "production" && c.DB.SSLMode == "disable" && !isLocalDB {
+		errs = append(errs, "DB_SSLMODE cannot be 'disable' in production for remote databases")
 	}
 
 	// ── Redis ─────────────────────────────────────────────────
