@@ -92,26 +92,37 @@ This project builds an independent hosting control panel supporting:
 
 ---
 
-## Getting Started (Development)
+## Installation (Production)
 
-### Prerequisites
-- Linux (Ubuntu 22.04+ / Debian 12+)
-- Go 1.22+
-- Node.js 20+
-- Docker (for local services)
-- PostgreSQL 15+
-- Redis 7+
+To install GohaHost on a fresh Ubuntu 22.04 or Debian 12 server:
 
-### Setup
 ```bash
-# Clone the repository
-git clone <repo-url> hosting-panel
-cd hosting-panel
+# 1. Download the installation script
+curl -O https://raw.githubusercontent.com/els3aty/goha-webpanel/main/installers/install.sh
 
-# Copy environment example (never use real credentials in dev)
+# 2. Make it executable
+chmod +x install.sh
+
+# 3. Run the installer (Must be root)
+sudo ./install.sh
+```
+
+### Post-Installation
+After the installation completes:
+1. Access the Control Plane at `http://<your-server-ip>:8080`
+2. Login with the credentials provided in your terminal output.
+3. Keep your `AES_MASTER_KEY` safe! (Stored in `/etc/gohahost/.env`).
+
+> ⚠️ **Important:** Do not run this installer on a server that already hosts active websites. GohaHost requires a fresh OS installation to configure OS-level quotas and web servers securely.
+
+---
+
+## Development Setup
+
+```bash
+git clone https://github.com/els3aty/goha-webpanel.git
+cd goha-webpanel
 cp .env.example .env
-
-# Run development setup script
 ./scripts/dev-setup.sh
 ```
 
