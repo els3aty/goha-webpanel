@@ -80,6 +80,21 @@ func run(logger *slog.Logger) error {
 	}
 	logger.Info("migrations complete")
 
+	// ── Seed Default Admin ────────────────────────────────────────────────────
+	var userCount int
+	if err := pool.QueryRow(ctx, "SELECT COUNT(*) FROM users").Scan(&userCount); err == nil && userCount == 0 {
+		hash, _ := auth.HashPassword("admin", nil)
+		_, err = pool.Exec(ctx, `
+			INSERT INTO users (username, email, password_hash, role, is_active, mfa_enabled)
+			VALUES ('admin', 'admin@gohahost.local', $1, 'super_admin', true, false)
+		`, hash)
+		if err == nil {
+			logger.Info("Seeded default admin user", slog.String("username", "admin"), slog.String("password", "admin"))
+		} else {
+			logger.Error("Failed to seed default admin", slog.Any("error", err))
+		}
+	}
+
 	// ── Initialize services ───────────────────────────────────────────────────
 	sessions := auth.NewSessionManager(pool, &cfg.Session)
 	auditLog := audit.New(pool, logger)
