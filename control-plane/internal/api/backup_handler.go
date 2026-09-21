@@ -124,7 +124,7 @@ func (h *BackupHandler) RunBackup(w http.ResponseWriter, r *http.Request) {
 
 	// Assume agent returns size_bytes in Data
 	var sizeBytes float64
-	if dataMap, ok := result.Data.(map[string]any); ok {
+	if dataMap, ok := result.Output.(map[string]any); ok {
 		if s, ok := dataMap["size_bytes"].(float64); ok {
 			sizeBytes = s
 		}

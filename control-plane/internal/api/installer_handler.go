@@ -132,7 +132,7 @@ func (h *InstallerHandler) InstallApp(w http.ResponseWriter, r *http.Request) {
 	})
 	_ = h.dbStore.CreateDatabaseUser(r.Context(), &models.DatabaseUser{
 		HostingUserID: user.ID,
-		DBUser:        dbUser,
+		DBUsername:    dbUser,
 	})
 
 	// Step 2: Install App Files via Agent

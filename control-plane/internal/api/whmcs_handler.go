@@ -3,9 +3,7 @@ package api
 import (
 	"encoding/json"
 	"net/http"
-	"time"
 
-	"github.com/google/uuid"
 	"github.com/els3aty/goha-webpanel/control-plane/internal/agentclient"
 	"github.com/els3aty/goha-webpanel/control-plane/internal/audit"
 	"github.com/els3aty/goha-webpanel/control-plane/internal/auth"

@@ -103,7 +103,7 @@ func (h *HostingHandler) CreateHostingUser(w http.ResponseWriter, r *http.Reques
 		NodeID:     node.ID,
 		PackageID:  pkg.ID,
 		Username:   req.Username,
-		Status:     models.HostingUserStatusActive,
+		Status:     string(models.HostingUserStatusActive),
 	}
 	if err := h.hostingStore.CreateHostingUser(r.Context(), hostingUser); err != nil {
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to create user in db"})
