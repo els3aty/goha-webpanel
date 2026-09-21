@@ -119,8 +119,8 @@ mkdir -p /etc/gohahost
 PUBLIC_IP=$(curl -s ifconfig.me)
 cat > /etc/gohahost/.env <<EOF
 APP_ENV=production
-APP_PORT=8080
-APP_URL=http://${PUBLIC_IP}:8080
+APP_PORT=2083
+APP_URL=http://${PUBLIC_IP}:2083
 APP_SECRET_KEY=$(head -c 32 /dev/urandom | base64)
 SESSION_SECRET=$(head -c 32 /dev/urandom | base64)
 
@@ -190,10 +190,10 @@ systemctl daemon-reload
 systemctl enable --now gohahost-control-plane
 systemctl enable --now gohahost-agent
 
-# Open port 8080 in firewalld if it's active
+# Open port 2083 in firewalld if it's active
 if systemctl is-active --quiet firewalld; then
-    echo "--> Opening port 8080 in firewall..."
-    firewall-cmd --permanent --add-port=8080/tcp >/dev/null 2>&1
+    echo "--> Opening port 2083 in firewall..."
+    firewall-cmd --permanent --add-port=2083/tcp >/dev/null 2>&1
     firewall-cmd --reload >/dev/null 2>&1
 fi
 
@@ -203,7 +203,7 @@ sleep 3
 echo -e "${GREEN}=====================================================${NC}"
 echo -e "${GREEN}        GohaHost Installed Successfully!             ${NC}"
 echo -e "${GREEN}=====================================================${NC}"
-echo -e "Access the Control Plane API: ${YELLOW}http://${PUBLIC_IP}:8080${NC}"
+echo -e "Access the Control Plane API: ${YELLOW}http://${PUBLIC_IP}:2083${NC}"
 echo -e "Database Password: ${YELLOW}${DB_PASSWORD}${NC}"
 echo -e "Configuration File: /etc/gohahost/.env"
 echo -e "Logs: journalctl -u gohahost-control-plane -f"
