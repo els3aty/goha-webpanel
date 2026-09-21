@@ -4,8 +4,13 @@ package main
 
 import (
 	"context"
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
+	"encoding/base64"
 	"flag"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
 	"os"
@@ -152,13 +157,8 @@ func run(logger *slog.Logger) error {
 
 // ── AES-GCM encryptor (Phase 2 — replace with Vault in Phase 16) ─────────────
 
-import (
-	"crypto/aes"
-	"crypto/cipher"
-	"crypto/rand"
-	"encoding/base64"
-	"io"
-)
+
+
 
 type aesEncryptor struct {
 	key []byte
