@@ -58,6 +58,7 @@ const (
 	OpCreateDatabase       OperationName = "CreateDatabase"
 	OpDeleteDatabase       OperationName = "DeleteDatabase"
 	OpCreateDatabaseUser   OperationName = "CreateDatabaseUser"
+	OpGrantDatabasePrivileges OperationName = "GrantDatabasePrivileges"
 	OpRotateDatabasePassword OperationName = "RotateDatabasePassword"
 	OpDeleteDatabaseUser   OperationName = "DeleteDatabaseUser"
 

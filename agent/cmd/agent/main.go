@@ -78,7 +78,6 @@ func run(logger *slog.Logger) error {
 	registry.Register(operations.OpCreateDatabase, operations.HandleCreateDatabase)
 	registry.Register(operations.OpCreateDatabaseUser, operations.HandleCreateDatabaseUser)
 	registry.Register(operations.OpGrantDatabasePrivileges, operations.HandleGrantDatabasePrivileges)
-	registry.Register(operations.OpEnableSSL, operations.HandleEnableSSL)
 	registry.Register(operations.OpCreateDNSZone, operations.HandleCreateDNSZone)
 	registry.Register(operations.OpDeleteDNSZone, operations.HandleDeleteDNSZone)
 	registry.Register(operations.OpRunBackup, operations.HandleRunBackup)
