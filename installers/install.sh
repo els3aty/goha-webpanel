@@ -1,18 +1,25 @@
 #!/usr/bin/env bash
-# GohaHost Production Installer
-# Supports: Ubuntu, Debian, AlmaLinux, Rocky Linux
+# GohaHost Production Installer (Full Stack)
+# Supports: Ubuntu, Debian, AlmaLinux, Rocky Linux, RHEL
 
 set -euo pipefail
 
-echo "====================================================="
-echo "        GohaHost Control Panel Installer"
-echo "====================================================="
+# Colors
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${GREEN}=====================================================${NC}"
+echo -e "${GREEN}        GohaHost Control Panel Installer             ${NC}"
+echo -e "${GREEN}=====================================================${NC}"
 
 if [ "$EUID" -ne 0 ]; then
-  echo "Please run as root."
+  echo -e "${RED}Error: Please run as root.${NC}"
   exit 1
 fi
 
+# 1. Detect OS
 OS_FAMILY=""
 if [ -f /etc/os-release ]; then
     . /etc/os-release
@@ -24,35 +31,160 @@ if [ -f /etc/os-release ]; then
             OS_FAMILY="rhel"
             ;;
         *)
-            echo "Unsupported OS: $ID"
+            echo -e "${RED}Unsupported OS: $ID${NC}"
             exit 1
             ;;
     esac
 else
-    echo "Cannot determine OS. /etc/os-release not found."
+    echo -e "${RED}Cannot determine OS. /etc/os-release not found.${NC}"
     exit 1
 fi
 
-echo "Detected OS Family: $OS_FAMILY ($PRETTY_NAME)"
+echo -e "${YELLOW}Detected OS: $PRETTY_NAME ($OS_FAMILY family)${NC}"
 
-echo "--> Installing Dependencies..."
+# 2. Install Dependencies
+echo -e "${YELLOW}--> Step 1: Installing System Dependencies...${NC}"
 if [ "$OS_FAMILY" = "debian" ]; then
-    apt-get update
-    apt-get install -y wget curl nginx postgresql redis-server
+    apt-get update -y
+    apt-get install -y wget curl git build-essential nginx postgresql redis-server certbot \
+        php-fpm php-cli php-mysql php-curl php-gd php-mbstring php-xml php-zip \
+        postfix dovecot-core dovecot-imapd dovecot-pop3d jq
+    
+    # Enable services
+    systemctl enable --now postgresql redis-server nginx php8.1-fpm || true
 elif [ "$OS_FAMILY" = "rhel" ]; then
     dnf install -y epel-release
-    dnf install -y wget curl nginx postgresql-server redis
+    dnf install -y dnf-plugins-core
+    dnf config-manager --set-enabled crb || true # For Alma 9
+    
+    # Install PHP via Remi
+    dnf install -y https://rpms.remirepo.net/enterprise/remi-release-9.rpm || true
+    dnf module reset php -y || true
+    dnf module enable php:remi-8.2 -y || true
+
+    dnf install -y wget curl git gcc nginx postgresql-server redis certbot \
+        php-fpm php-cli php-mysqlnd php-curl php-gd php-mbstring php-xml php-zip \
+        postfix dovecot jq
+    
     # Initialize Postgres on RHEL
     if [ ! -f /var/lib/pgsql/data/PG_VERSION ]; then
+        echo "Initializing PostgreSQL..."
         postgresql-setup --initdb || true
     fi
-    systemctl enable --now postgresql
+    
+    # Enable services
+    systemctl enable --now postgresql redis nginx php-fpm postfix dovecot
 fi
 
-echo "--> Fetching Latest Release..."
-# Note: For production, this downloads the compiled binaries.
-# Simulated for now.
-echo "GohaHost installed successfully."
-echo "Access Control Plane at http://$(curl -s ifconfig.me):8080"
-echo "AES_MASTER_KEY saved to /etc/gohahost/.env"
-echo "====================================================="
+# 3. Install Golang
+echo -e "${YELLOW}--> Step 2: Installing Golang 1.22...${NC}"
+if ! command -v go &> /dev/null; then
+    wget -q https://go.dev/dl/go1.22.1.linux-amd64.tar.gz -O /tmp/go.tar.gz
+    rm -rf /usr/local/go
+    tar -C /usr/local -xzf /tmp/go.tar.gz
+    rm -f /tmp/go.tar.gz
+    ln -sf /usr/local/go/bin/go /usr/bin/go
+fi
+go version
+
+# 4. Clone Source Code
+echo -e "${YELLOW}--> Step 3: Fetching GohaHost Source Code...${NC}"
+INSTALL_DIR="/opt/gohahost"
+if [ -d "$INSTALL_DIR" ]; then
+    echo "Directory $INSTALL_DIR exists. Updating repository..."
+    cd "$INSTALL_DIR"
+    git pull origin main
+else
+    git clone https://github.com/els3aty/goha-webpanel.git "$INSTALL_DIR"
+    cd "$INSTALL_DIR"
+fi
+
+# 5. Setup PostgreSQL Database
+echo -e "${YELLOW}--> Step 4: Configuring Database...${NC}"
+DB_PASSWORD=$(head -c 12 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 16)
+if [ "$OS_FAMILY" = "debian" ]; then
+    sudo -u postgres psql -c "CREATE USER gohahost WITH PASSWORD '$DB_PASSWORD';" || true
+    sudo -u postgres psql -c "CREATE DATABASE gohahost OWNER gohahost;" || true
+elif [ "$OS_FAMILY" = "rhel" ]; then
+    sudo -u postgres psql -c "CREATE USER gohahost WITH PASSWORD '$DB_PASSWORD';" || true
+    sudo -u postgres psql -c "CREATE DATABASE gohahost OWNER gohahost;" || true
+    # Fix RHEL ident auth issue
+    sed -i 's/ident/md5/g' /var/lib/pgsql/data/pg_hba.conf || true
+    systemctl restart postgresql
+fi
+
+# 6. Generate Configuration
+echo -e "${YELLOW}--> Step 5: Generating Configurations...${NC}"
+mkdir -p /etc/gohahost
+cat > /etc/gohahost/.env <<EOF
+PORT=8080
+DATABASE_URL=postgres://gohahost:${DB_PASSWORD}@localhost:5432/gohahost?sslmode=disable
+REDIS_URL=redis://localhost:6379/0
+AES_MASTER_KEY=$(head -c 32 /dev/urandom | base64)
+EOF
+
+# 7. Compile Binaries
+echo -e "${YELLOW}--> Step 6: Compiling Control Plane and Agent...${NC}"
+cd "$INSTALL_DIR/control-plane"
+go build -o /usr/local/bin/gohahost-control-plane ./cmd/server
+
+cd "$INSTALL_DIR/agent"
+go build -o /usr/local/bin/gohahost-agent ./cmd/agent
+
+# 8. Setup Systemd Services
+echo -e "${YELLOW}--> Step 7: Creating Systemd Services...${NC}"
+
+# Control Plane Service
+cat > /etc/systemd/system/gohahost-control-plane.service <<EOF
+[Unit]
+Description=GohaHost Control Plane
+After=network.target postgresql.service redis.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/gohahost/control-plane
+EnvironmentFile=/etc/gohahost/.env
+ExecStart=/usr/local/bin/gohahost-control-plane
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Agent Service
+cat > /etc/systemd/system/gohahost-agent.service <<EOF
+[Unit]
+Description=GohaHost Agent
+After=network.target nginx.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/gohahost/agent
+EnvironmentFile=/etc/gohahost/.env
+ExecStart=/usr/local/bin/gohahost-agent
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable --now gohahost-control-plane
+systemctl enable --now gohahost-agent
+
+# Give it a moment to start and run migrations
+sleep 3
+
+echo -e "${GREEN}=====================================================${NC}"
+echo -e "${GREEN}        GohaHost Installed Successfully!             ${NC}"
+echo -e "${GREEN}=====================================================${NC}"
+PUBLIC_IP=$(curl -s ifconfig.me)
+echo -e "Access the Control Plane API: ${YELLOW}http://${PUBLIC_IP}:8080${NC}"
+echo -e "Database Password: ${YELLOW}${DB_PASSWORD}${NC}"
+echo -e "Configuration File: /etc/gohahost/.env"
+echo -e "Logs: journalctl -u gohahost-control-plane -f"
+echo -e "====================================================="
