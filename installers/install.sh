@@ -116,11 +116,23 @@ fi
 # 6. Generate Configuration
 echo -e "${YELLOW}--> Step 5: Generating Configurations...${NC}"
 mkdir -p /etc/gohahost
+PUBLIC_IP=$(curl -s ifconfig.me)
 cat > /etc/gohahost/.env <<EOF
-PORT=8080
-DATABASE_URL=postgres://gohahost:${DB_PASSWORD}@localhost:5432/gohahost?sslmode=disable
-REDIS_URL=redis://localhost:6379/0
-AES_MASTER_KEY=$(head -c 32 /dev/urandom | base64)
+APP_ENV=production
+APP_PORT=8080
+APP_URL=http://${PUBLIC_IP}:8080
+APP_SECRET_KEY=$(head -c 32 /dev/urandom | base64)
+SESSION_SECRET=$(head -c 32 /dev/urandom | base64)
+
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_NAME=gohahost
+DB_USER=gohahost
+DB_PASSWORD=${DB_PASSWORD}
+DB_SSLMODE=disable
+
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
 EOF
 
 # 7. Compile Binaries
@@ -191,7 +203,6 @@ sleep 3
 echo -e "${GREEN}=====================================================${NC}"
 echo -e "${GREEN}        GohaHost Installed Successfully!             ${NC}"
 echo -e "${GREEN}=====================================================${NC}"
-PUBLIC_IP=$(curl -s ifconfig.me)
 echo -e "Access the Control Plane API: ${YELLOW}http://${PUBLIC_IP}:8080${NC}"
 echo -e "Database Password: ${YELLOW}${DB_PASSWORD}${NC}"
 echo -e "Configuration File: /etc/gohahost/.env"
