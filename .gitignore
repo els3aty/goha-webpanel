@@ -1,0 +1,113 @@
+# ============================================================
+# HOSTING PANEL — .gitignore
+# ============================================================
+
+# ─── Environment & Secrets ───────────────────────────────────
+.env
+.env.local
+.env.*.local
+*.env
+!.env.example
+
+# ─── Private Keys & Certificates (NEVER commit these) ────────
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.cer
+id_rsa
+id_ed25519
+id_ecdsa
+*.ppk
+agent_signing_key*
+tls_*.key
+mtls_*.key
+
+# ─── Secret & Credential Files ───────────────────────────────
+secrets/
+*.secret
+*.secrets
+credentials.json
+service-account*.json
+
+# ─── Go Build Artifacts ──────────────────────────────────────
+/control-plane/bin/
+/agent/bin/
+*.exe
+*.test
+*.out
+vendor/
+
+# ─── Node.js ─────────────────────────────────────────────────
+node_modules/
+.next/
+.nuxt/
+dist/
+build/
+.pnpm-store/
+*.tgz
+
+# ─── Database Files ──────────────────────────────────────────
+*.sql.gz
+*.dump
+*.db
+*.sqlite
+*.sqlite3
+
+# ─── Log Files ───────────────────────────────────────────────
+*.log
+logs/
+log/
+
+# ─── Backup & Archive Files ──────────────────────────────────
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.zip
+*.7z
+backups/
+restic-repo/
+
+# ─── Test Artifacts ──────────────────────────────────────────
+coverage/
+*.coverprofile
+.coverage
+htmlcov/
+tests/fixtures/real-*
+tests/fixtures/prod-*
+
+# ─── IDE & Editor ────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ─── OS Files ────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+Desktop.ini
+
+# ─── Temporary Files ─────────────────────────────────────────
+tmp/
+temp/
+*.tmp
+*.temp
+.cache/
+
+# ─── Docker ──────────────────────────────────────────────────
+docker-compose.override.yml
+.docker/
+
+# ─── Release Artifacts ───────────────────────────────────────
+releases/
+*.tar.sig
+
+# ─── Local Dev Config ────────────────────────────────────────
+.local/
+local.config.*
+dev.config.*
