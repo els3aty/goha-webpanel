@@ -227,8 +227,9 @@ func (c *Config) Validate() error {
 		if !c.Session.SecureCookie {
 			errs = append(errs, "SESSION_SECURE_COOKIE must be true in production")
 		}
-		if c.DB.SSLMode == "disable" {
-			errs = append(errs, "DB_SSLMODE cannot be disable in production")
+		isLocalDB := c.DB.Host == "localhost" || c.DB.Host == "127.0.0.1"
+		if c.DB.SSLMode == "disable" && !isLocalDB {
+			errs = append(errs, "DB_SSLMODE cannot be disable in production for remote databases")
 		}
 		if len(errs) > 0 {
 			return errors.New(strings.Join(errs, "; "))
